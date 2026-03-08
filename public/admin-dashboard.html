@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Dashboard - Discord Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .navbar {
+            background: rgba(15, 12, 41, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-content {
+            max-width: 7xl;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #58a6ff 0%, #9370db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.6);
+            color: #fca5a5;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 1);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            background: none;
+            border: none;
+            min-width: 44px;
+            min-height: 44px;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #58a6ff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(10px, 10px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #58a6ff;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #58a6ff;
+            background: rgba(88, 166, 255, 0.1);
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px 16px;
+            background: rgba(88, 166, 255, 0.2);
+            border: 2px dashed rgba(88, 166, 255, 0.5);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-input-label:hover {
+            background: rgba(88, 166, 255, 0.3);
+            border-color: #58a6ff;
+        }
+
+        .file-input-wrapper input[type=file] {
+            display: none;
+        }
+
+        .btn-submit {
+            padding: 12px 40px;
+            background: linear-gradient(120deg, #58a6ff 0%, #6c5ce7 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.4);
+            min-height: 44px;
+            min-width: 100px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(88, 166, 255, 0.6);
+        }
+
+        .bot-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(88, 166, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .bot-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #58a6ff;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .bot-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .bot-details p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #86efac;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #58a6ff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .guild-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .guild-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .guild-card:hover {
+            border-color: rgba(88, 166, 255, 0.6);
+            background: rgba(88, 166, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .guild-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: rgba(88, 166, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px solid rgba(88, 166, 255, 0.5);
+        }
+
+        .guild-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .guild-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #58a6ff;
+        }
+
+        .guild-stat {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(88, 166, 255, 0.2);
+            padding-bottom: 15px;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tab-button.active {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
+        }
+
+        .tab-button:hover {
+            color: #58a6ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .navbar-content {
+                height: 50px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .admin-badge {
+                display: none;
+            }
+
+            .btn-logout {
+                width: 44px;
+                padding: 0;
+            }
+
+            .container {
+                margin: 20px auto;
+            }
+
+            .card {
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+
+            .bot-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tabs {
+                gap: 10px;
+            }
+
+            .tab-button {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+
+            .guild-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-submit {
+                width: 100%;
+            }
+
+            .form-input {
+                font-size: 16px;
+                padding: 14px 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .navbar-content {
+                height: 45px;
+            }
+
+            .logo {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .bot-avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .tabs {
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            .tab-button {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <div class="logo">🤖 Discord Bot Admin</div>
+            </div>
+            
+            <div class="navbar-right">
+                <span class="admin-badge">🔐 Admin</span>
+                <button class="btn-logout" onclick="logout()" title="Logout">
+                    <span style="display: none;" class="logout-text">Logout</span>
+                    <span style="font-size: 1.2rem;">🚪</span>
+                </button>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Alert -->
+        <div id="alert" class="alert"></div>
+
+        <!-- Bot Info Card -->
+        <div class="card">
+            <div class="card-title">ข้อมูลบอท 🤖</div>
+            <div class="bot-info">
+                <img id="botAvatar" src="" alt="Bot Avatar" class="bot-avatar">
+                <div class="bot-details">
+                    <h3 id="botName">กำลังโหลด...</h3>
+                    <p id="botGuilds">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="card">
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab(event, 'profile')">อัปเดตโปรไฟล์</button>
+                <button class="tab-button" onclick="switchTab(event, 'env')">ตั้งค่าตัวแปร</button>
+                <button class="tab-button" onclick="switchTab(event, 'guilds')">เซิร์ฟเวอร์ทั้งหมด</button>
+            </div>
+
+            <!-- Tab 1: Update Profile -->
+            <div id="profile" class="tab-content active">
+                <div class="card-title">อัปเดตโปรไฟล์บอท</div>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">ชื่อบอท</label>
+                        <input type="text" id="botNameInput" class="form-input" placeholder="ป้อนชื่อบอทใหม่">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">รูปอวตาร์บอท</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="avatarInput" accept="image/*">
+                            <label for="avatarInput" class="file-input-label">
+                                📸 คลิกเพื่อเลือกรูป หรือลาก-วาง
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <span id="submitText">บันทึกการเปลี่ยนแปลง</span>
+                        <span id="spinner" class="loading" style="display: none; margin-left: 10px;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tab 2: Environment Variables -->
+            <div id="env" class="tab-content">
+                <div class="card-title">ตั้งค่าตัวแปรสภาพแวดล้อม</div>
+                <form id="envForm">
+                    <div class="form-group">
+                        <label class="form-label">TOKEN</label>
+                        <input type="password" id="tokenInput" class="form-input" placeholder="ป้อน Discord Bot Token">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CLIENT_ID</label>
+                        <input type="text" id="clientIdInput" class="form-input" placeholder="ป้อน Client ID">
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <span id="envSubmitText">อัปเดตตัวแปร</span>
+                        <span id="envSpinner" class="loading" style="display: none; margin-left: 10px;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tab 3: All Guilds -->
+            <div id="guilds" class="tab-content">
+                <div class="card-title">เซิร์ฟเวอร์ทั้งหมด</div>
+                <div id="guildContainer" class="guild-grid">
+                    <div style="text-align: center; padding: 40px;">กำลังโหลด...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div style="margin-top: 40px;">
+            <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; color: #58a6ff;">
+                ✨ ฟีเจอร์เพิ่มเติม
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Broadcast Feature -->
+                <a href="/broadcast" style="text-decoration: none;">
+                    <div style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); border: 1px solid rgba(88, 166, 255, 0.3); border-radius: 15px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">📢</div>
+                        <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: #58a6ff;">ส่งข้อความ</div>
+                        <div style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">ส่งข้อความไปยังเซิร์ฟเวอร์ทั้งหมด</div>
+                    </div>
+                </a>
+
+                <!-- More Features Coming Soon -->
+                <div style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); border: 1px solid rgba(88, 166, 255, 0.3); border-radius: 15px; padding: 30px; text-align: center; opacity: 0.6;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🔒</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: rgba(255, 255, 255, 0.7);">มาเร็ว ๆ</div>
+                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">ฟีเจอร์เพิ่มเติมอีกมากมาย</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            // Logout ปุ่ม
+            const logoutText = document.querySelector('.logout-text');
+            logoutText.style.display = logoutText.style.display === 'none' ? 'inline' : 'none';
+        });
+
+        const JWT_SECRET = 'your-secret-key';
+
+        // ตรวจสอบว่า logged in หรือไม่
+        async function checkAuth() {
+            console.log('🔍 checkAuth เริ่ม');
+            
+            const token = localStorage.getItem('authToken');
+            console.log('📌 token:', token ? 'มี' : 'ไม่มี');
+            
+            if (!token) {
+                console.log('❌ ไม่มี token → redirect ไป login');
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                console.log('🔄 ส่ง verify-token request...');
+                
+                const response = await fetch('/api/verify-token', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                console.log('✅ ได้ response:', response.status);
+                
+                const data = await response.json();
+                console.log('📊 response data:', data);
+                
+                if (!data.valid) {
+                    console.log('❌ Token ไม่ valid → redirect ไป login');
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                console.log('✅✅✅ Token valid! ยังอยู่ใน admin');
+                
+            } catch (error) {
+                console.error('❌ ERROR Details:', error);
+                console.error('❌ ERROR Message:', error.message);
+                window.location.href = '/login';
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login';
+        }
+
+        // Get auth token
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        // Switch tabs
+        function switchTab(e, tabName) {
+            e.preventDefault();
+            
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            e.target.classList.add('active');
+
+            // Load data
+            if (tabName === 'guilds') {
+                loadAdminGuilds();
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = 'alert ' + type;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // โหลดข้อมูลบอท
+        async function loadBotInfo() {
+            try {
+                const response = await fetch('/api/admin/bot-info', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                const data = await response.json();
+                document.getElementById('botAvatar').src = data.avatar;
+                document.getElementById('botName').textContent = data.username;
+                document.getElementById('botGuilds').textContent = `ใช้งานใน ${data.totalGuilds} เซิร์ฟเวอร์`;
+                document.getElementById('botNameInput').value = data.username;
+            } catch (error) {
+                showAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        }
+
+        // โหลดเซิร์ฟเวอร์
+        async function loadAdminGuilds() {
+            try {
+                const response = await fetch('/api/admin/guild-info', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                const data = await response.json();
+                const guilds = data.guilds;
+
+                if (guilds.length === 0) {
+                    document.getElementById('guildContainer').innerHTML = '<div style="text-align: center; padding: 40px;">ไม่มีเซิร์ฟเวอร์</div>';
+                    return;
+                }
+
+                let html = '';
+                guilds.forEach(guild => {
+                    const iconHTML = guild.iconURL ? 
+                        `<img src="${guild.iconURL}" alt="${guild.name}">` : 
+                        `<div>${guild.name.charAt(0).toUpperCase()}</div>`;
+
+                    html += `
+                        <div class="guild-card">
+                            <div class="guild-icon">${iconHTML}</div>
+                            <div class="guild-name">${guild.name}</div>
+                            <div class="guild-stat">👥 สมาชิก: ${guild.memberCount}</div>
+                            <div class="guild-stat">🆔 ${guild.id}</div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('guildContainer').innerHTML = html;
+            } catch (error) {
+                showAlert('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        }
+
+        // Update profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('bot-name', document.getElementById('botNameInput').value);
+            if (document.getElementById('avatarInput').files.length > 0) {
+                formData.append('avatar', document.getElementById('avatarInput').files[0]);
+            }
+
+            document.getElementById('submitText').style.display = 'none';
+            document.getElementById('spinner').style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/api/admin/update-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('✅ ' + data.message, 'success');
+                    setTimeout(() => loadBotInfo(), 1000);
+                } else {
+                    showAlert('❌ ' + data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ เกิดข้อผิดพลาด: ' + error.message, 'error');
+            } finally {
+                document.getElementById('submitText').style.display = 'inline';
+                document.getElementById('spinner').style.display = 'none';
+            }
+        });
+
+        // Update env
+        document.getElementById('envForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = document.getElementById('tokenInput').value;
+            const clientId = document.getElementById('clientIdInput').value;
+
+            if (!token || !clientId) {
+                showAlert('❌ กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            document.getElementById('envSubmitText').style.display = 'none';
+            document.getElementById('envSpinner').style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/api/admin/update-env', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({ token, clientId })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('✅ ' + data.message, 'success');
+                    document.getElementById('tokenInput').value = '';
+                    document.getElementById('clientIdInput').value = '';
+                } else {
+                    showAlert('❌ ' + data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ เกิดข้อผิดพลาด: ' + error.message, 'error');
+            } finally {
+                document.getElementById('envSubmitText').style.display = 'inline';
+                document.getElementById('envSpinner').style.display = 'none';
+            }
+        });
+
+        // Drag and drop
+        const fileInput = document.getElementById('avatarInput');
+        const label = document.querySelector('.file-input-label');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            label.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            label.addEventListener(eventName, () => {
+                label.style.background = 'rgba(88, 166, 255, 0.4)';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            label.addEventListener(eventName, () => {
+                label.style.background = 'rgba(88, 166, 255, 0.2)';
+            }, false);
+        });
+
+        label.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+        }, false);
+
+        // Initialize
+        checkAuth();
+        loadBotInfo();
+    </script>
+</body>
+</html>

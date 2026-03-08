@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Discord Bot Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .navbar {
+            background: rgba(15, 12, 41, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-content {
+            max-width: 7xl;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #58a6ff 0%, #9370db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #58a6ff;
+            background: rgba(88, 166, 255, 0.2);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            background: none;
+            border: none;
+            min-width: 44px;
+            min-height: 44px;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #58a6ff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(10px, 10px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Mobile Menu */
+        .nav-mobile {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(88, 166, 255, 0.2);
+            flex-direction: column;
+            gap: 0;
+            animation: slideDown 0.3s ease-out;
+            z-index: 40;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-mobile.active {
+            display: flex;
+        }
+
+        .nav-mobile a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(88, 166, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .nav-mobile a:hover {
+            background: rgba(88, 166, 255, 0.1);
+            color: #58a6ff;
+        }
+
+        .nav-mobile a:last-child {
+            border-bottom: none;
+        }
+
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(88, 166, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(147, 112, 219, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(120deg, #58a6ff 0%, #9370db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 80px;
+        }
+
+        .btn-primary {
+            padding: 12px 40px;
+            background: linear-gradient(120deg, #58a6ff 0%, #6c5ce7 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.4);
+            text-decoration: none;
+            display: inline-block;
+            min-height: 44px;
+            min-width: 100px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(88, 166, 255, 0.6);
+        }
+
+        .btn-secondary {
+            padding: 12px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(88, 166, 255, 0.5);
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-height: 44px;
+            min-width: 100px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(88, 166, 255, 0.2);
+            border-color: rgba(88, 166, 255, 1);
+            transform: translateY(-3px);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(88, 166, 255, 0.6);
+            background: rgba(88, 166, 255, 0.1);
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #58a6ff;
+            margin: 15px 0;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(88, 166, 255, 0.5);
+            background: rgba(88, 166, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        .access-badge {
+            display: inline-block;
+            background: rgba(147, 112, 219, 0.3);
+            border: 1px solid rgba(147, 112, 219, 0.6);
+            color: #c084fc;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .btn-group {
+                gap: 12px;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+
+            .hero-section {
+                padding: 40px 20px;
+            }
+
+            .stats-container {
+                gap: 20px;
+                margin-top: 40px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .feature-grid {
+                gap: 20px;
+            }
+
+            .feature-card {
+                padding: 25px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .navbar-content {
+                height: 50px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-mobile {
+                top: 50px;
+            }
+
+            .hero-title {
+                font-size: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🤖 Discord Bot</div>
+            
+            <!-- Desktop Navigation -->
+            <div class="nav-desktop">
+                <a href="/" class="nav-link">หน้าแรก</a>
+                <a href="#guilds" class="nav-link">เซิร์ฟเวอร์</a>
+                <span class="access-badge">👤 Public View</span>
+                <a href="/login" class="nav-link" style="color: #58a6ff; font-weight: 600;">🔐 Admin Login</a>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="nav-mobile" id="navMobile">
+            <a href="/">หน้าแรก</a>
+            <a href="#guilds">เซิร์ฟเวอร์</a>
+            <a href="/login">🔐 Admin Login</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Discord Bot Dashboard</h1>
+            <p class="hero-subtitle">ข้อมูลบอท Discord ของเรา ✨</p>
+            
+            <div class="btn-group">
+                <a href="#guilds" class="btn-primary">ดูเซิร์ฟเวอร์</a>
+                <a href="/login" class="btn-secondary">🔐 Admin Login</a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div style="font-size: 2rem;">🤖</div>
+                    <div class="stat-label">ชื่อบอท</div>
+                    <div class="stat-number" id="botName" style="font-size: 1.5rem; color: #fff;">กำลังโหลด...</div>
+                </div>
+                <div class="stat-card">
+                    <div style="font-size: 2rem;">🌐</div>
+                    <div class="stat-label">เซิร์ฟเวอร์</div>
+                    <div class="stat-number" id="totalGuilds">0</div>
+                </div>
+                <div class="stat-card">
+                    <div style="font-size: 2rem;">⚡</div>
+                    <div class="stat-label">สถานะ</div>
+                    <div class="stat-number" style="font-size: 1.5rem; color: #4ade80;">🟢 Online</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">
+            ข้อมูลบอท 📊
+        </h2>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">บอท Discord</div>
+                <div class="feature-desc">บอทนี้ช่วยจัดการเซิร์ฟเวอร์และให้บริการหลากหลายแก่สมาชิก</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <div class="feature-title">สมาชิกจำนวนมาก</div>
+                <div class="feature-desc">ใช้งานได้บนหลายเซิร์ฟเวอร์พร้อมสมาชิกมากมาย</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">Responsive Design</div>
+                <div class="feature-desc">ทำงานได้ดีบนทุกอุปกรณ์ มือถือ แท็บเล็ต และเดสก์ทอป</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servers Section -->
+    <section id="guilds" class="max-w-7xl mx-auto px-6 py-20">
+        <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">
+            เซิร์ฟเวอร์ 🌐
+        </h2>
+
+        <div id="guildContainer">
+            <div style="text-align: center; padding: 40px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
+                <div style="color: rgba(255, 255, 255, 0.7);">กำลังโหลดข้อมูล...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: rgba(15, 12, 41, 0.8); border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 100px; padding: 40px 20px;">
+        <div class="max-w-7xl mx-auto text-center">
+            <p style="color: rgba(255, 255, 255, 0.6);">© 2024 Discord Bot Dashboard. สำหรับดูข้อมูลแอดมิน <a href="/login" style="color: #58a6ff; text-decoration: none;">คลิกที่นี่</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMobile = document.getElementById('navMobile');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMobile.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-mobile a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMobile.classList.remove('active');
+            });
+        });
+
+        // โหลดข้อมูลบอท
+        async function loadBotInfo() {
+            try {
+                const response = await fetch('/api/public/bot-info');
+                const data = await response.json();
+                document.getElementById('totalGuilds').textContent = data.totalGuilds;
+                document.getElementById('botName').textContent = data.username;
+            } catch (error) {
+                console.error('Error loading bot info:', error);
+                document.getElementById('totalGuilds').textContent = '?';
+            }
+        }
+
+        // โหลดข้อมูลเซิร์ฟเวอร์
+        async function loadGuilds() {
+            try {
+                const response = await fetch('/api/public/guild-info');
+                const data = await response.json();
+                const guilds = data.guilds;
+
+                if (guilds.length === 0) {
+                    document.getElementById('guildContainer').innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 3rem; margin-bottom: 10px;">📭</div>
+                            <div style="color: rgba(255, 255, 255, 0.7);">ยังไม่มีข้อมูลเซิร์ฟเวอร์</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // สร้าง grid สำหรับเซิร์ฟเวอร์
+                let html = '<div class="feature-grid">';
+                
+                guilds.forEach(guild => {
+                    const iconHTML = guild.iconURL ? 
+                        `<img src="${guild.iconURL}" alt="${guild.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 2px solid rgba(88, 166, 255, 0.5);">` : 
+                        `<div style="font-size: 3rem; margin-bottom: 15px;">${guild.name.charAt(0).toUpperCase()}</div>`;
+
+                    html += `
+                        <div class="feature-card">
+                            ${iconHTML}
+                            <div class="feature-title">${guild.name}</div>
+                            <div class="feature-desc">
+                                <div style="margin: 10px 0;"><strong>👥 สมาชิก:</strong> ${guild.memberCount}</div>
+                                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5); word-break: break-all;">ID: ${guild.id}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                document.getElementById('guildContainer').innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading guilds:', error);
+                document.getElementById('guildContainer').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">❌</div>
+                        <div style="color: rgba(255, 255, 255, 0.7);">ไม่สามารถโหลดข้อมูลได้</div>
+                    </div>
+                `;
+            }
+        }
+
+        // เรียกใช้ฟังก์ชัน
+        loadBotInfo();
+        loadGuilds();
+    </script>
+</body>
+</html>
