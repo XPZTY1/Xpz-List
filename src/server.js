@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 dotenv.config();
 const client = require('./index'); // นำเข้าตัว client จาก index.js
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // ===== ตั้งค่า JWT Secret =====
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';

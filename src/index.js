@@ -1,7 +1,5 @@
 const { Client, IntentsBitField } = require('discord.js');
 const { CommandKit } = require('commandkit');
-const cron = require('node-cron');
-const { exec } = require('child_process');
 require('dotenv/config');
 const { devs, server, role } = require('../config.json');
 
@@ -28,17 +26,9 @@ new CommandKit({
 });
 
 
-// ตั้งเวลาการรีสตาร์ทบอท (ทุกวันเวลาเที่ยงคืน)
-cron.schedule('0 0 * * *', () => {
-    console.log('Restarting bot...');
-    exec('pm2 restart bot', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error restarting bot: ${error}`);
-            return;
-        }
-        console.log(`Bot restarted: ${stdout}`);
-    });
-});
+// หมายเหตุ: เดิมมี cron job สั่ง `pm2 restart bot` ทุกเที่ยงคืน
+// แต่ Render ไม่ได้รันแอปผ่าน pm2 (ใช้ Node process ตรงๆ) จึงลบออก
+// ถ้าต้องการ auto-restart เป็นระยะ ให้ตั้งค่า Health Check บน Render แทน
 
 client.login(process.env.TOKEN);
 
